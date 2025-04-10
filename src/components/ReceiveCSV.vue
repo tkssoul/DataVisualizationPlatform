@@ -1,6 +1,12 @@
 <template>
   <div class="receiver-container">
-    <div class="drop-area" @dragover.prevent @drop="handleDrop">请将 CSV 文件拖拽到此处</div>
+    <div class="drop-area" @dragover.prevent @drop="handleDrop">
+      <div v-if="csvFilename" class="csv-file">
+        <img src="@/assets/csv-icon.svg" />
+        {{ csvFilename }}
+      </div>
+      <text v-else>请将 CSV 文件拖拽到此处</text>
+    </div>
 
     <div class="ouput-container">
       <div class="file-show">
@@ -42,14 +48,49 @@ const fetchData = async () => {
   try {
     const response = await axios.get('http://127.0.0.1:5001/plot')
     if (response.status !== 200) {
-      throw new Error('Failed to fetch data')
+      throw new Error('获取数据失败')
     }
     const data = response.data
     console.log(JSON.stringify(data))
+    // console.log(data.length)
     renderChart(data)
   } catch (error) {
-    console.error('Error fetching data:', error)
+    console.error('获取数据失败:', error)
   }
+}
+
+const generateSeriesList = (data) => {
+  // 科技风配色方案数组
+  const colorSchemes = [
+    { start: '#0cc0ff', end: '#5653ff', shadow: '#0cc0ff' }, // 蓝色系
+    { start: '#00ffcc', end: '#00ccaa', shadow: '#00ffcc' }, // 青色系
+    { start: '#c000ff', end: '#8a00cc', shadow: '#c000ff' }, // 紫色系
+    { start: '#00ff66', end: '#00cc44', shadow: '#00ff66' }, // 绿色系
+    { start: '#ff9900', end: '#cc7700', shadow: '#ff9900' }, // 橙色系
+    { start: '#ff00cc', end: '#cc0099', shadow: '#ff00cc' }, // 粉色系
+    { start: '#ffcc00', end: '#cc9900', shadow: '#ffcc00' }, // 黄色系
+  ]
+
+  const seriesList = []
+  for (let i = 0; i < 7; i++) {
+    seriesList.push({
+      name: `时序${i + 1}`,
+      type: 'line',
+      data: data.map((item, index) => [index, item[i]]),
+      symbol: 'none',
+      lineStyle: {
+        width: 2,
+        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+          { offset: 0, color: colorSchemes[i].start },
+          { offset: 1, color: colorSchemes[i].end },
+        ]),
+        shadowColor: '#0cc0ff',
+        shadowBlur: 5,
+      },
+      smooth: true,
+    })
+  }
+  return seriesList
 }
 
 // 修改 renderChart 函数中的坐标轴配置
@@ -59,17 +100,7 @@ const renderChart = (data) => {
 
   // 初始化ECharts实例
   chart.value = echarts.init(chartContainer.value)
-  
-  // 分析数据范围
-  let xMin = Math.floor(Math.min(...data.map(item => item[0])));
-  let xMax = Math.ceil(Math.max(...data.map(item => item[0])));
-  let yMin = Math.floor(Math.min(...data.map(item => item[1])));
-  let yMax = Math.ceil(Math.max(...data.map(item => item[1])));
-  
-  // 添加边距，使图表内容不会紧贴边缘
-  const xPadding = (xMax - xMin) * 0.1;
-  const yPadding = (yMax - yMin) * 0.1;
-  
+
   // 科技风格配置
   const option = {
     backgroundColor: '#0f1621',
@@ -92,11 +123,13 @@ const renderChart = (data) => {
         type: 'cross',
         lineStyle: { color: '#0cc0ff', type: 'dashed' },
       },
-      formatter: function(params) {
-        return params.map(item => {
-          return `${item.seriesName}: (${item.value[0].toFixed(3)}, ${item.value[1].toFixed(3)})`;
-        }).join('<br/>');
-      }
+      formatter: function (params) {
+        return params
+          .map((item) => {
+            return `${item.seriesName}: (${item.value[0].toFixed(3)}, ${item.value[1].toFixed(3)})`
+          })
+          .join('<br/>')
+      },
     },
     grid: {
       left: '5%',
@@ -110,95 +143,39 @@ const renderChart = (data) => {
     },
     xAxis: {
       type: 'value',
-      min: xMin - xPadding,
-      max: xMax + xPadding,
+      min: 'dataMin',
+      max: 'dataMax',
       splitLine: {
         show: true,
         lineStyle: { color: 'rgba(12, 192, 255, 0.1)', type: 'dashed' },
       },
       axisLine: { lineStyle: { color: '#0cc0ff' } },
-      axisLabel: { 
+      axisLabel: {
         color: '#7adbff',
-        formatter: value => value.toFixed(1)
+        formatter: (value) => value.toFixed(0),
       },
       name: 'X轴',
-      nameTextStyle: { color: '#0cc0ff' }
+      nameTextStyle: { color: '#0cc0ff' },
     },
     yAxis: {
       type: 'value',
-      min: yMin - yPadding,
-      max: yMax + yPadding,
+      min: 'dataMin',
+      max: 'dataMax',
       splitLine: {
         lineStyle: { color: 'rgba(12, 192, 255, 0.1)', type: 'dashed' },
       },
       axisLine: { lineStyle: { color: '#0cc0ff' } },
-      axisLabel: { 
+      axisLabel: {
         color: '#7adbff',
-        formatter: value => value.toFixed(1)
+        formatter: (value) => value.toFixed(1),
       },
       name: 'Y轴',
-      nameTextStyle: { color: '#0cc0ff' }
+      nameTextStyle: { color: '#0cc0ff' },
     },
-    series: [
-      {
-        name: '数据点',
-        type: 'scatter',
-        data: data.map(item => [item[0], item[1]]),
-        symbol: 'circle',
-        symbolSize: 8,
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            { offset: 0, color: '#00feff' },
-            { offset: 1, color: '#0061ff' }
-          ]),
-          borderColor: '#fff',
-          borderWidth: 1,
-          shadowColor: '#0cc0ff',
-          shadowBlur: 10
-        },
-        emphasis: {
-          itemStyle: {
-            borderWidth: 2,
-            shadowBlur: 20,
-          }
-        }
-      },
-      {
-        name: '连接线',
-        type: 'line',
-        data: data.map(item => [item[0], item[1]]),
-        symbol: 'none',
-        lineStyle: {
-          width: 2,
-          color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-            { offset: 0, color: '#0cc0ff' },
-            { offset: 1, color: '#5653ff' }
-          ]),
-          shadowColor: '#0cc0ff',
-          shadowBlur: 5,
-        },
-        smooth: true
-      }
-    ],
+    series: generateSeriesList(data),
     animation: true,
     animationDuration: 1000,
     animationEasing: 'cubicOut',
-    dataZoom: [
-      {
-        type: 'inside',
-        xAxisIndex: 0,
-        filterMode: 'none',
-        start: 0,
-        end: 100
-      },
-      {
-        type: 'inside',
-        yAxisIndex: 0,
-        filterMode: 'none',
-        start: 0,
-        end: 100
-      }
-    ]
   }
 
   // 渲染图表
@@ -223,8 +200,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
-
+const csvFilename = ref('')
 const npyFiles = ref([])
 
 const handleDrop = async (event) => {
@@ -243,6 +219,7 @@ const handleDrop = async (event) => {
 
       if (response.status === 200) {
         const data = response.data
+        csvFilename.value = data.csvFilename
         npyFiles.value = data.files.map((file) => ({
           name: file,
           url: `/download/${file}`,
@@ -386,6 +363,13 @@ const handleDrop = async (event) => {
   justify-content: space-around;
   width: 100%;
   height: 100%;
+}
+
+.csv-file {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .file-item {
