@@ -1,0 +1,28 @@
+@import './base.css';
+
+a,
+.blue {
+  text-decoration: none;
+  color: rgba(12,192,255,0.8);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    /* background-color: rgba(12,192,255,0.3); */
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  /* #app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  } */
+}
