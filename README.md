@@ -1,4 +1,3 @@
-```markdown
 # 数据处理与可视化系统技术介绍文档
 
 ## 一、项目概述
@@ -17,7 +16,7 @@
 
 ## 二、技术架构与核心模块
 ### 1. 整体架构图
-```plaintext
+```
 用户交互层（Vue3）
 ├─ 拖拽文件上传组件（HTML5 Drag-and-Drop）
 ├─ 数据处理状态管理（Vue Composition API）
@@ -129,4 +128,3 @@ node server.js
 **文档更新时间**：2025年4月10日
 **作者**：XXX
 **联系方式**：xxx@example.com
-```
