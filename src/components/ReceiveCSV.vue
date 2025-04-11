@@ -1,15 +1,33 @@
 <template>
   <div class="receiver-container">
+    <div class="title-text">时序预测模型数据分析与可视化</div>
     <div class="drop-area" @dragover.prevent @drop="handleDrop">
-      <div v-if="csvFilename" class="csv-file">
+      <div v-if="csvFilename" class="csv-file container-text">
         <img src="@/assets/csv-icon.svg" />
         {{ csvFilename }}
       </div>
-      <text v-else>请将 CSV 文件拖拽到此处</text>
+      <div v-else class="container-text">
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <text>请将 CSV 文件拖拽到此处</text>
+      </div>
     </div>
+    <!-- <div class="drop-area">
+      <el-upload
+        crossorigin
+        accept="text/csv"
+        drag
+        action
+        :http-request="handleDrop"
+        :headers="
+        {'Access-Control-Allow-Origin': '*',  }">
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div>将CSV文件拖拽到这里 或者 <em>点击上传</em></div>
+        <div class="el-upload__text">将CSV文件拖拽到这里 或者 <em>点击上传</em></div>
+      </el-upload>
+    </div> -->
 
     <div class="ouput-container">
-      <div class="file-show">
+      <div class="file-show container-text">
         <text v-if="npyFiles.length < 1">这里将会展示输出文件</text>
         <div v-else class="file-list">
           <div v-for="(file, index) in npyFiles" :key="index">
@@ -35,6 +53,7 @@
 import { ref, onUnmounted, render } from 'vue'
 import axios from 'axios'
 import * as echarts from 'echarts' // 导入 ECharts
+import { UploadFilled } from '@element-plus/icons-vue'
 
 axios.defaults.baseURL = 'http://127.0.0.1:5000'
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
@@ -242,8 +261,8 @@ const handleDrop = async (event) => {
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 
 .ouput-container {
-  width: 65%;
-  height: 95%;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -251,12 +270,16 @@ const handleDrop = async (event) => {
 }
 
 .file-show {
-  width: 100%;
-  height: 15%;
+  width: 95%;
+  height: 30vh;
+  margin: 1rem auto;
   border: 2px dashed #0cc0ff;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.container-text {
   color: #0cc0ff;
   font-family: 'Orbitron', sans-serif;
   font-size: 20px;
@@ -264,7 +287,9 @@ const handleDrop = async (event) => {
 }
 
 .tech-container {
-  width: 100%;
+  width: 95%;
+  height: 95vh;
+  margin: 1rem auto;
   padding: 20px;
   background-color: #0f1621;
   border-radius: 8px;
@@ -340,11 +365,18 @@ const handleDrop = async (event) => {
 
 .receiver-container {
   width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  height: 100%;
   background-color: #0f1621;
+  padding-top: 2vh;
+}
+
+.title-text {
+  color: #0cc0ff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 2vh;
+  text-shadow: 0 0 10px rgba(12, 192, 255, 0.5);
 }
 
 .drop-area {
@@ -352,9 +384,10 @@ const handleDrop = async (event) => {
   justify-content: center;
   align-items: center;
   border: 2px dashed #0cc0ff;
-  text-align: center;
-  width: 30%;
-  height: 95%;
+  width: 95%;
+  height: 50vh;
+  margin: 0 auto;
+  margin-bottom: 2vh;
 }
 
 .file-list {
@@ -380,5 +413,9 @@ const handleDrop = async (event) => {
 }
 .file-item:hover {
   background-color: rgba(12, 192, 255, 0.3);
+}
+
+el-upload .el-upload__input {
+  display: none;
 }
 </style>
