@@ -5,7 +5,6 @@ import vue from '@vitejs/plugin-vue'
 // import vueDevTools from 'vite-plugin-vue-devtools'
 import compression from 'vite-plugin-compression'
 
-
 export default defineConfig({
   plugins: [
     vue(),
@@ -16,7 +15,7 @@ export default defineConfig({
       threshold: 10240,
       algorithm: 'brotliCompress',
       ext: '.br',
-    })
+    }),
   ],
   resolve: {
     alias: {
@@ -34,5 +33,15 @@ export default defineConfig({
         chunkFileNames: '[name].js',
       },
     },
-  }
+  },
+  css: {
+   preprocessorOptions: {
+     less: {
+       modifyVars: {
+         'arcoblue-6': '#0cc0ff',
+       },
+       javascriptEnabled: true,
+     }
+   }
+  },
 })

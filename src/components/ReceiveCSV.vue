@@ -2,7 +2,7 @@
   <div class="receiver-container">
     <div class="title-text">时序预测模型数据分析与可视化</div>
     <div class="loading-container" v-if="loading">
-      <a-spin :loading="loading" :size="64"></a-spin>
+      <a-spin :loading="loading" :size="64" tip="数据正在预测中..."></a-spin>
       <a-progress :percent="fakeProgressPercent" :style="{ width: '50%' }" />
     </div>
     <div class="upload-container" v-if="!loading">
