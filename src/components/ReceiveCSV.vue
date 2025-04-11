@@ -2,8 +2,15 @@
   <div class="receiver-container">
     <div class="title-text">时序预测模型数据分析与可视化</div>
     <div class="loading-container" v-if="loading">
-      <a-spin :loading="loading" :size="64" tip="数据正在预测中..."></a-spin>
-      <a-progress :percent="fakeProgressPercent" :style="{ width: '50%' }" />
+      <a-spin :loading="loading" :size="64">
+        <template #tip>
+          <div :style="{ color: '#0cc0ff' }">数据正在预测中...</div>
+        </template>
+        <template #icon>
+          <img src="@/assets/loading.svg" />
+        </template>
+      </a-spin>
+      <a-progress :percent="fakeProgressPercent" color="#0cc0ff" :style="{ width: '50%' }" />
     </div>
     <div class="upload-container" v-if="!loading">
       <el-upload
@@ -43,6 +50,7 @@ import { useDataStore } from '@/stores/store'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElLoading, ElMessage } from 'element-plus'
+import { color } from 'echarts'
 
 const dataStore = useDataStore()
 const router = useRouter()
@@ -277,12 +285,12 @@ const loadingProgress = () => {
 
 .el-icon--upload {
   font-size: 48px;
-  color: #0cc0ff;
+  color: #ffffff;
   margin-bottom: 16px;
 }
 
 .el-upload__text {
-  color: #0cc0ff;
+  color: #ffffff;
   font-size: 25px;
 }
 </style>
