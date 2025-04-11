@@ -1,8 +1,11 @@
 <template>
-  <!-- <a-spin :loading="loading" tip="模型运行中..." :size="64"> -->
   <div class="receiver-container">
     <div class="title-text">时序预测模型数据分析与可视化</div>
-    <div class="upload-container">
+    <div class="loading-container" v-if="loading">
+      <a-spin :loading="loading" :size="64"></a-spin>
+      <a-progress :percent="fakeProgressPercent" :style="{ width: '50%' }" />
+    </div>
+    <div class="upload-container" v-if="!loading">
       <el-upload
         class="upload-area"
         drag
@@ -31,7 +34,6 @@
       </el-upload>
     </div>
   </div>
-  <!-- </a-spin> -->
 </template>
 
 <script setup>
@@ -54,6 +56,7 @@ const csvFilename = ref('')
 const isUploading = ref(false)
 const progressPercentage = ref(0)
 let progressInterval = null
+var fakeProgressInterval = null
 
 // 清理进度条定时器
 onUnmounted(() => {
@@ -71,7 +74,7 @@ const startFakeProgress = () => {
   progressPercentage.value = 0.0
 
   // 创建匀速进度，在2秒内完成到95%
-  const totalSteps = 40 // 40个步骤，每步50ms，总共2000ms
+  const totalSteps = 20 // 40个步骤，每步50ms，总共1000ms
   const incrementPerStep = 95 / totalSteps
 
   progressInterval = setInterval(() => {
@@ -99,7 +102,7 @@ const handleFileChange = async (file) => {
     formData.append('csvFile', file.raw)
 
     // 3. 等待进度条至少显示2秒
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // 4. 发送请求
     const response = await axios.post('http://127.0.0.1:5000/process-csv', formData, {
@@ -122,21 +125,19 @@ const handleFileChange = async (file) => {
       await new Promise((resolve) => setTimeout(resolve, 500))
       isUploading.value = false
 
-      const loadingInstance = ElLoading.service({
-        lock: true,
-        fullscreen: true,
-        background: 'rgba(0, 0, 0, 0.7)',
-        text: '正在预测/模型运行中',
-      })
-      setTimeout(() => {
-        loadingInstance.close()
-        navigateToVision()
-      }, 20000)
-      //
-      // loading.value = true
+      // const loadingInstance = ElLoading.service({
+      //   lock: true,
+      //   fullscreen: true,
+      //   background: 'rgba(0, 0, 0, 0.7)',
+      //   text: '正在预测/模型运行中',
+      // })
       // setTimeout(() => {
-      //   loading.value = false
-      // }, 2000)
+      //   loadingInstance.close()
+      //   navigateToVision()
+      // }, 20000)
+      //
+      loading.value = true
+      loadingProgress()
     } else {
       handleUploadError('处理CSV文件时出错')
     }
@@ -152,6 +153,22 @@ const handleUploadError = (message) => {
   progressPercentage.value = 0
   ElMessage.error(message)
   console.error(message)
+}
+
+// 虚拟模型运行进度条
+const fakeProgressPercent = ref(0)
+const loadingProgress = () => {
+  fakeProgressInterval = setInterval(() => {
+    fakeProgressPercent.value = Math.min(
+      100,
+      Math.round((fakeProgressPercent.value + 0.01) * 100) / 100,
+    )
+    if (fakeProgressPercent.value >= 1) {
+      clearInterval(fakeProgressInterval)
+      loading.value = false
+      navigateToVision()
+    }
+  }, 100)
 }
 </script>
 
@@ -183,6 +200,15 @@ const handleUploadError = (message) => {
   text-shadow: 0 0 10px rgba(12, 192, 255, 0.5);
 }
 
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 50vh;
+}
+
 .container-text {
   color: #0cc0ff;
   font-family: 'Orbitron', sans-serif;
@@ -192,7 +218,7 @@ const handleUploadError = (message) => {
 }
 
 .upload-container {
-  width: 95%;
+  width: 95vw;
   height: 50vh;
 }
 
