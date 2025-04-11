@@ -7,5 +7,3 @@ import ReceiveCSV from '@/components/ReceiveCSV.vue'
     <ReceiveCSV />
   </main>
 </template>
-
-<style scoped></style>

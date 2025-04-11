@@ -3,7 +3,7 @@
 a,
 .blue {
   text-decoration: none;
-  color: rgba(12,192,255,0.8);
+  color: rgba(12, 192, 255, 0.8);
   transition: 0.4s;
   padding: 3px;
 }
