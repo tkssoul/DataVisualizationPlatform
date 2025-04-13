@@ -29,7 +29,7 @@ def process_csv():
         # 假设生成了一些 NPY 文件，存放在 DOWNLOAD_FOLDER 中
         npy_files = ['metrics.npy', 'real_prediction.npy', 'pred.npy', 'true.npy']
 
-        return jsonify({'files': npy_files,'csvFilename':file.filename})
+        return jsonify({'files': npy_files}), 
 
 @app.route('/download/<path:filename>')
 def download_file(filename):
