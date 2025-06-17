@@ -1,1 +1,0 @@
-import{g as n,o as s}from"./vue-core-rkjfYzYN.js";const _=(t,e)=>{const c=t.__vccOpts||t;for(const[o,r]of e)c[o]=r;return c},a={};function f(t,e){return s(),n("div")}const u=_(a,[["render",f]]);export{u as default};

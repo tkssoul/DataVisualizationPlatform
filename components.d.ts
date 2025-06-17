@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     ReceiveCSV: typeof import('./src/components/ReceiveCSV.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

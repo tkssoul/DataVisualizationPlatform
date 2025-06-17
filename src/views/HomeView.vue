@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import ReceiveCSV from '@/components/ReceiveCSV.vue'
 </script>
 
 <template>
   <main>
-    <RouterView />
+    <ReceiveCSV />
   </main>
 </template>

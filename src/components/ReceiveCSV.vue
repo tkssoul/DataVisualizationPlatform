@@ -133,7 +133,7 @@ const renderChart = (data: Array<Array<number>>) => {
       formatter: function (params: Array<FormatterDataSet>) {
         return params
           .map((item) => {
-            const valueArray = item.value as number[];
+            const valueArray = item.value as number[]
             return `${item.seriesName}: (${valueArray[0].toFixed(3)}, ${valueArray[1].toFixed(3)})`
           })
           .join('<br/>')
@@ -250,12 +250,12 @@ const handleDrop = async (event: DragEvent) => {
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 
 .ouput-container {
-  width: 100%;
-  height: 100%;
+  min-width: 100vw;
+  height: min-content;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .file-show {
@@ -276,8 +276,8 @@ const handleDrop = async (event: DragEvent) => {
 }
 
 .tech-container {
-  width: 95%;
-  height: 95vh;
+  width: 1050px;
+  height: 650px;
   margin: 1rem auto;
   padding: 20px;
   background-color: #0f1621;
@@ -353,7 +353,7 @@ const handleDrop = async (event: DragEvent) => {
 }
 
 .receiver-container {
-  width: 100vw;
+  min-width: 100vw;
   height: 100%;
   background-color: #0f1621;
   padding-top: 2vh;
@@ -374,7 +374,7 @@ const handleDrop = async (event: DragEvent) => {
   align-items: center;
   border: 2px dashed #0cc0ff;
   width: 95%;
-  height: 50vh;
+  height: 40vh;
   margin: 0 auto;
   margin-bottom: 2vh;
 }
